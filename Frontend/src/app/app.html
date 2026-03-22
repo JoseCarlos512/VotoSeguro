@@ -212,6 +212,31 @@
               </div>
             </div>
 
+            <div class="vicepresident-block">
+              <h4>Vicepresidentes del partido</h4>
+              <div class="vicepresident-grid">
+                @if (candidate.vicepresidentes?.length) {
+                  @for (vp of candidate.vicepresidentes; track vp.name) {
+                    <mat-card appearance="outlined" class="vicepresident-card">
+                      <mat-card-title>{{ vp.name }}</mat-card-title>
+                      <mat-card-subtitle>{{ vp.region }} · {{ vp.term }}</mat-card-subtitle>
+                      <mat-chip-set>
+                        @for (focus of vp.focus; track focus) {
+                          <mat-chip>{{ focus }}</mat-chip>
+                        }
+                      </mat-chip-set>
+                    </mat-card>
+                  }
+                } @else {
+                  <mat-card appearance="outlined" class="vicepresident-card empty">
+                    <mat-card-content>
+                      <p>No hay vicepresidentes disponibles.</p>
+                    </mat-card-content>
+                  </mat-card>
+                }
+              </div>
+            </div>
+
             <div class="senator-block">
               <h4>Senadores del partido</h4>
               <div class="senator-grid">

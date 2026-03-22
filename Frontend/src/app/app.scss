@@ -306,6 +306,26 @@
   padding: 0.75rem;
 }
 
+.vicepresident-block {
+  margin-top: 1.5rem;
+}
+
+.vicepresident-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  margin-top: 0.75rem;
+}
+
+.vicepresident-card {
+  padding: 0.75rem;
+}
+
+.vicepresident-card.empty {
+  text-align: center;
+  opacity: 0.7;
+}
+
 .vote-card {
   margin-top: 1.5rem;
   border-radius: 20px;
