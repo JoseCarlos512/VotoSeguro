@@ -1,0 +1,106 @@
+<section class="detail-header">
+  <button mat-stroked-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Volver a partidos
+  </button>
+</section>
+
+@if (candidatesService.loading()) {
+  <mat-card class="state-card" appearance="outlined">
+    <mat-card-content>
+      <h3>Cargando informacion...</h3>
+      <p>Estamos consultando el servicio oficial.</p>
+    </mat-card-content>
+  </mat-card>
+} @else if (candidatesService.error()) {
+  <mat-card class="state-card" appearance="outlined">
+    <mat-card-content>
+      <h3>No se pudo cargar la informacion</h3>
+      <p>{{ candidatesService.error() }}</p>
+    </mat-card-content>
+  </mat-card>
+} @else if (candidate(); as current) {
+  <mat-card appearance="outlined" class="president-card">
+    <mat-card-content>
+      <div class="president-header">
+        <div class="avatar">
+          {{ current.initials }}
+        </div>
+        <div>
+          <p class="role">{{ current.runningFor }}</p>
+          <h2>{{ current.name }}</h2>
+          <p class="party">{{ current.partyName }}</p>
+          <p class="bio">{{ current.bio }}</p>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="highlights">
+        <div>
+          <h4>Prioridades</h4>
+          <mat-chip-set>
+            @for (priority of current.priorities; track priority) {
+              <mat-chip>{{ priority }}</mat-chip>
+            }
+          </mat-chip-set>
+        </div>
+        <div>
+          <h4>Experiencia</h4>
+          <ul>
+            @for (item of current.experience; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <section class="block">
+    <div class="block-title">
+      <h3>Vicepresidentes</h3>
+      <span>{{ current.vicepresidentes.length }} en total</span>
+    </div>
+    <div class="grid">
+      @for (vp of current.vicepresidentes; track vp.name) {
+        <mat-card appearance="outlined" class="person-card">
+          <mat-card-title>{{ vp.name }}</mat-card-title>
+          <mat-card-subtitle>{{ vp.region }} · {{ vp.term }}</mat-card-subtitle>
+          <mat-chip-set>
+            @for (focus of vp.focus; track focus) {
+              <mat-chip>{{ focus }}</mat-chip>
+            }
+          </mat-chip-set>
+        </mat-card>
+      }
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="block-title">
+      <h3>Senadores</h3>
+      <span>{{ current.senators.length }} en total</span>
+    </div>
+    <div class="grid">
+      @for (senator of current.senators; track senator.name) {
+        <mat-card appearance="outlined" class="person-card">
+          <mat-card-title>{{ senator.name }}</mat-card-title>
+          <mat-card-subtitle>{{ senator.region }} · {{ senator.term }}</mat-card-subtitle>
+          <mat-chip-set>
+            @for (focus of senator.focus; track focus) {
+              <mat-chip>{{ focus }}</mat-chip>
+            }
+          </mat-chip-set>
+        </mat-card>
+      }
+    </div>
+  </section>
+} @else {
+  <mat-card class="state-card" appearance="outlined">
+    <mat-card-content>
+      <h3>Partido no encontrado</h3>
+      <p>Vuelve a la lista y selecciona otro partido.</p>
+    </mat-card-content>
+  </mat-card>
+}

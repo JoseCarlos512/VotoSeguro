@@ -1,0 +1,61 @@
+<section class="party-hero">
+  <div>
+    <p class="eyebrow">Explora los partidos</p>
+    <h1>Selecciona un partido politico</h1>
+    <p class="subtitle">
+      Haz doble click en una tarjeta para ver al presidente, vicepresidentes y senadores.
+    </p>
+  </div>
+  <mat-form-field appearance="fill" class="search">
+    <mat-label>Buscar partido</mat-label>
+    <input
+      matInput
+      [ngModel]="searchTerm()"
+      (ngModelChange)="searchTerm.set($event)"
+      placeholder="Ej: Renovacion, Futuro"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+</section>
+
+<section class="party-grid">
+  @if (candidatesService.loading()) {
+    <mat-card class="state-card" appearance="outlined">
+      <mat-card-content>
+        <h3>Cargando partidos...</h3>
+        <p>Estamos consultando el servicio oficial.</p>
+      </mat-card-content>
+    </mat-card>
+  } @else if (candidatesService.error()) {
+    <mat-card class="state-card" appearance="outlined">
+      <mat-card-content>
+        <h3>No se pudo cargar la informacion</h3>
+        <p>{{ candidatesService.error() }}</p>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    @for (party of filteredParties(); track party.id) {
+      <mat-card
+        appearance="outlined"
+        class="party-card"
+        (dblclick)="openParty(party.id)"
+      >
+        <div class="party-banner" [style.background]="party.color"></div>
+        <mat-card-content>
+          <h3>{{ party.name }}</h3>
+          <p>Candidatos: {{ party.candidateCount }}</p>
+          <p>Senadores: {{ party.senatorCount }}</p>
+          <span class="hint">Doble click para ver detalles</span>
+        </mat-card-content>
+      </mat-card>
+    }
+    @if (filteredParties().length === 0) {
+      <mat-card class="state-card" appearance="outlined">
+        <mat-card-content>
+          <h3>No hay partidos con ese nombre</h3>
+          <p>Intenta con otro termino de busqueda.</p>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+</section>
