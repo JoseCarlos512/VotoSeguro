@@ -1,0 +1,36 @@
+@use '@angular/material' as mat;
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: 'Source Sans 3',
+      density: 0,
+    )
+  );
+}
+
+body {
+  color-scheme: light;
+  background: radial-gradient(circle at top, rgba(16, 185, 129, 0.08), transparent 50%),
+    radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.12), transparent 55%),
+    #f8fafc;
+  color: var(--mat-sys-on-surface);
+  font-family: 'Source Sans 3', sans-serif;
+  margin: 0;
+  min-height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+mat-card {
+  background: rgba(255, 255, 255, 0.94);
+}

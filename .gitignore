@@ -1,0 +1,38 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.cache
+
+# VS Code
+.vscode/
+
+# Environment files
+.env
+.env.*
+
+# Frontend (Angular)
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.angular/
+Frontend/coverage/
+Frontend/.vscode/
+Frontend/*.log
+
+# Backend (generic)
+Backend/node_modules/
+Backend/dist/
+Backend/coverage/
+Backend/.venv/
+Backend/venv/
+Backend/__pycache__/
+Backend/*.pyc
+Backend/target/
+Backend/bin/
+Backend/obj/
+Backend/*.log

@@ -1,0 +1,268 @@
+<div class="app-shell">
+  <mat-toolbar class="topbar" color="primary">
+    <div class="brand">
+      <span class="brand-mark">VS</span>
+      <div class="brand-text">
+        <span class="brand-name">VotoSeguro</span>
+        <span class="brand-subtitle">Elecciones Generales {{ electionYear }}</span>
+      </div>
+    </div>
+    <span class="spacer"></span>
+    <button mat-button class="ghost-button">Centro de ayuda</button>
+    <button mat-raised-button color="accent">Ingresar al padron</button>
+  </mat-toolbar>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <p class="eyebrow">Tu voto, tu decision informada</p>
+        <h1>Conoce a los candidatos, sus partidos y el equipo senatorial.</h1>
+        <p class="hero-description">
+          VotoSeguro reune la informacion esencial de cada postulante para que compares planes, experiencia y
+          prioridades en un solo lugar.
+        </p>
+        <div class="hero-actions">
+          <button mat-raised-button color="primary">Comenzar comparacion</button>
+          <button mat-stroked-button>Ver guia de votacion</button>
+        </div>
+      </div>
+      <mat-card class="hero-card" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>Resumen rapido</mat-card-title>
+          <mat-card-subtitle>Actualizado por el equipo de analisis</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="stat-grid">
+            <div class="stat">
+              <span class="stat-label">Candidatos</span>
+              <span class="stat-value">{{ candidates.length }}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Partidos</span>
+              <span class="stat-value">{{ parties.length }}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Senadores</span>
+              <span class="stat-value">{{ senatorOptions().length }}</span>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <p class="helper-text">Filtra por partido o senador para encontrar propuestas especificas.</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </section>
+
+  <section class="filters">
+    <mat-card class="filter-card" appearance="outlined">
+      <mat-card-title>Busqueda inteligente</mat-card-title>
+      <mat-card-content>
+        <div class="filter-grid">
+          <mat-form-field appearance="fill">
+            <mat-label>Buscar candidato o partido</mat-label>
+            <input matInput [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" placeholder="Ej: Sofia, verde, empleo" />
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Filtrar por partido</mat-label>
+            <mat-select [ngModel]="partyFilter()" (ngModelChange)="partyFilter.set($event)">
+              <mat-option value="">Todos los partidos</mat-option>
+              @for (party of partyOptions(); track party.id) {
+                <mat-option [value]="party.id">{{ party.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Filtrar por senador</mat-label>
+            <mat-select [ngModel]="senatorFilter()" (ngModelChange)="senatorFilter.set($event)">
+              <mat-option value="">Todos los senadores</mat-option>
+              @for (senator of senatorOptions(); track senator) {
+                <mat-option [value]="senator">{{ senator }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="filter-actions">
+          <button mat-stroked-button (click)="clearFilters()">Limpiar filtros</button>
+          <span class="result-count">Resultados: {{ filteredCandidates().length }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <section class="main-grid">
+    <div class="candidate-list">
+      <h2>Candidatos presidenciales</h2>
+      <div class="candidate-grid">
+        @for (candidate of filteredCandidates(); track candidate.id) {
+          <mat-card
+            appearance="outlined"
+            class="candidate-card"
+            [class.selected]="candidate.id === selectedCandidateId()"
+            (click)="selectCandidate(candidate.id)"
+          >
+            <div class="candidate-header">
+              <div
+                class="avatar"
+                [style.background]="partyById(candidate.partyId)?.color"
+              >
+                {{ candidate.initials }}
+              </div>
+              <div>
+                <h3>{{ candidate.name }}</h3>
+                <p>{{ partyById(candidate.partyId)?.name }}</p>
+              </div>
+              <mat-icon class="chevron">chevron_right</mat-icon>
+            </div>
+            <mat-chip-set aria-label="Prioridades">
+              @for (priority of candidate.priorities; track priority) {
+                <mat-chip>{{ priority }}</mat-chip>
+              }
+            </mat-chip-set>
+          </mat-card>
+        }
+        @if (filteredCandidates().length === 0) {
+          <mat-card class="empty-state" appearance="outlined">
+            <mat-card-content>
+              <h3>No se encontraron candidatos</h3>
+              <p>Ajusta tus filtros para ver mas resultados.</p>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </div>
+
+    <div class="candidate-detail">
+      <h2>Ficha completa</h2>
+      @if (selectedCandidate(); as candidate) {
+        <mat-card appearance="outlined" class="detail-card">
+          <mat-card-content>
+            <div class="detail-header">
+              <div
+                class="avatar large"
+                [style.background]="partyById(candidate.partyId)?.color"
+              >
+                {{ candidate.initials }}
+              </div>
+              <div class="detail-info">
+                <p class="role">{{ candidate.runningFor }}</p>
+                <h3>{{ candidate.name }}</h3>
+                <p class="party">{{ partyById(candidate.partyId)?.name }}</p>
+                <p class="bio">{{ candidate.bio }}</p>
+              </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="detail-columns">
+              <div>
+                <h4>Prioridades de gobierno</h4>
+                <mat-chip-set>
+                  @for (priority of candidate.priorities; track priority) {
+                    <mat-chip>{{ priority }}</mat-chip>
+                  }
+                </mat-chip-set>
+              </div>
+              <div>
+                <h4>Experiencia clave</h4>
+                <ul>
+                  @for (item of candidate.experience; track item) {
+                    <li>{{ item }}</li>
+                  }
+                </ul>
+              </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="running-mate">
+              <mat-icon>groups</mat-icon>
+              <div>
+                <p class="label">Candidatura vicepresidencial</p>
+                <p class="value">{{ candidate.runningMate }}</p>
+              </div>
+            </div>
+
+            <div class="senator-block">
+              <h4>Senadores del partido</h4>
+              <div class="senator-grid">
+                @for (senator of candidate.senators; track senator.name) {
+                  <mat-card appearance="outlined" class="senator-card">
+                    <mat-card-title>{{ senator.name }}</mat-card-title>
+                    <mat-card-subtitle>{{ senator.region }} · {{ senator.term }}</mat-card-subtitle>
+                    <mat-chip-set>
+                      @for (focus of senator.focus; track focus) {
+                        <mat-chip>{{ focus }}</mat-chip>
+                      }
+                    </mat-chip-set>
+                  </mat-card>
+                }
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card appearance="outlined" class="vote-card">
+          <mat-card-title>Confirmacion de voto</mat-card-title>
+          <mat-card-content>
+            <p>
+              Estas por registrar tu preferencia por <strong>{{ candidate.name }}</strong> y su partido
+              <strong>{{ partyById(candidate.partyId)?.name }}</strong>.
+            </p>
+            <mat-checkbox [ngModel]="confirmVote()" (ngModelChange)="confirmVote.set($event)">
+              Confirmo que he revisado la informacion y deseo votar por este candidato.
+            </mat-checkbox>
+            <div class="vote-actions">
+              <button mat-stroked-button>Ver comparacion</button>
+              <button mat-raised-button color="primary" [disabled]="!confirmVote()">
+                Registrar voto
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  </section>
+
+  <section class="party-section">
+    <h2>Partidos y bancada senatorial</h2>
+    <div class="party-grid">
+      @for (party of parties; track party.id) {
+        <mat-card appearance="outlined" class="party-card">
+          <div class="party-banner" [style.background]="party.color"></div>
+          <mat-card-content>
+            <h3>{{ party.name }}</h3>
+            <p class="party-ideology">{{ party.ideology }}</p>
+            <p class="party-slogan">{{ party.slogan }}</p>
+            <div class="party-meta">
+              <span>Lider: {{ party.leader }}</span>
+              <span>Fundado en {{ party.founded }}</span>
+            </div>
+            <mat-chip-set>
+              @for (candidate of candidates; track candidate.id) {
+                @if (candidate.partyId === party.id) {
+                  <mat-chip>{{ candidate.name }}</mat-chip>
+                }
+              }
+            </mat-chip-set>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div>
+      <h4>VotoSeguro</h4>
+      <p>Plataforma ciudadana para decisiones informadas.</p>
+    </div>
+    <div class="footer-links">
+      <span>Transparencia</span>
+      <span>Preguntas frecuentes</span>
+      <span>Contacto</span>
+    </div>
+  </footer>
+</div>
+
