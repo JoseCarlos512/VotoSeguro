@@ -36,6 +36,44 @@
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
+.guide-link {
+  margin-bottom: 2rem;
+}
+
+.guide-link mat-card {
+  border-radius: 20px;
+}
+
+.how-to-vote {
+  margin: 2.5rem 0;
+}
+
+.how-header h2 {
+  margin: 0.6rem 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.how-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-top: 1.5rem;
+}
+
+.how-card {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.step {
+  display: inline-block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+}
+
 .party-card {
   border-radius: 20px;
   overflow: hidden;

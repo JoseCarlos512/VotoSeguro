@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,6 +19,7 @@ import { Party } from '../../models';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    RouterLink,
   ],
   templateUrl: './party-list.component.html',
   styleUrl: './party-list.component.scss',

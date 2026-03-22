@@ -18,6 +18,55 @@
   </mat-form-field>
 </section>
 
+<div class="guide-link">
+  <mat-card appearance="outlined">
+    <mat-card-content>
+      <h3>Guia rapida para votar</h3>
+      <p>Consulta ejemplos visuales sobre como marcar la cédula correctamente.</p>
+      <button mat-stroked-button routerLink="/guia">Ver guia</button>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<section class="how-to-vote">
+  <div class="how-header">
+    <p class="eyebrow">Guia rapida</p>
+    <h2>Como votar en 3 pasos</h2>
+    <p class="subtitle">
+      Lleva tu documento, identifica tu mesa y confirma tu decision de forma segura.
+    </p>
+  </div>
+  <div class="how-grid">
+    <mat-card appearance="outlined" class="how-card">
+      <mat-card-content>
+        <span class="step">Paso 1</span>
+        <h3>Verifica tu local</h3>
+        <p>
+          Consulta tu local y mesa asignada antes de salir. Lleva tu DNI vigente y lapicero azul.
+        </p>
+      </mat-card-content>
+    </mat-card>
+    <mat-card appearance="outlined" class="how-card">
+      <mat-card-content>
+        <span class="step">Paso 2</span>
+        <h3>Identifica tu partido</h3>
+        <p>
+          Revisa el simbolo y los nombres en la cedula. Marca solo una opcion para evitar anular tu voto.
+        </p>
+      </mat-card-content>
+    </mat-card>
+    <mat-card appearance="outlined" class="how-card">
+      <mat-card-content>
+        <span class="step">Paso 3</span>
+        <h3>Deposita tu voto</h3>
+        <p>
+          Dobla la cedula, depositala en el anfora y firma el padron. Conserva tu constancia.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</section>
+
 <section class="party-grid">
   @if (candidatesService.loading()) {
     <mat-card class="state-card" appearance="outlined">

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-label="Ejemplo de voto senadores">
+  <rect width="640" height="420" fill="#f8fafc" />
+  <rect x="60" y="40" width="520" height="340" rx="24" fill="#ffffff" stroke="#e2e8f0" stroke-width="4" />
+  <text x="90" y="95" font-family="Montserrat, Arial" font-size="20" fill="#334155">SENADORES</text>
+  <rect x="90" y="120" width="460" height="210" rx="16" fill="#f1f5f9" />
+  <rect x="120" y="150" width="60" height="60" rx="10" fill="#22c55e" opacity="0.9" />
+  <rect x="200" y="150" width="150" height="60" rx="10" fill="#ffffff" stroke="#cbd5f5" />
+  <text x="215" y="190" font-family="Source Sans 3, Arial" font-size="18" fill="#0f172a">Partido C</text>
+  <rect x="370" y="150" width="150" height="60" rx="10" fill="#ffffff" stroke="#cbd5f5" />
+  <text x="385" y="190" font-family="Source Sans 3, Arial" font-size="16" fill="#0f172a">Pref. 01</text>
+  <rect x="120" y="235" width="60" height="60" rx="10" fill="#94a3b8" opacity="0.5" />
+  <rect x="200" y="235" width="150" height="60" rx="10" fill="#ffffff" stroke="#cbd5f5" />
+  <text x="215" y="275" font-family="Source Sans 3, Arial" font-size="18" fill="#0f172a">Partido D</text>
+  <rect x="370" y="235" width="150" height="60" rx="10" fill="#ffffff" stroke="#cbd5f5" />
+  <text x="385" y="275" font-family="Source Sans 3, Arial" font-size="16" fill="#0f172a">Pref. --</text>
+  <line x1="132" y1="162" x2="168" y2="198" stroke="#fff" stroke-width="6" />
+  <line x1="168" y1="162" x2="132" y2="198" stroke="#fff" stroke-width="6" />
+  <text x="90" y="360" font-family="Source Sans 3, Arial" font-size="14" fill="#64748b">Puedes marcar preferencia del mismo partido.</text>
+</svg>

@@ -1,0 +1,63 @@
+<section class="guide-header">
+  <button mat-stroked-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Volver a partidos
+  </button>
+  <div>
+    <p class="eyebrow">Guia visual</p>
+    <h1>Como marcar tu voto correctamente</h1>
+    <p class="subtitle">
+      Sigue estos ejemplos para evitar anular tu voto. Marca solo con aspa (X) o cruz (+).
+    </p>
+  </div>
+</section>
+
+<section class="examples">
+  <mat-card appearance="outlined" class="example-card">
+    <img src="assets/guide/ballot-president.svg" alt="Ejemplo de voto presidencial" />
+    <mat-card-content>
+      <h3>Presidencia</h3>
+      <p>Marca una sola organizacion politica en la columna de presidencia.</p>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined" class="example-card">
+    <img src="assets/guide/ballot-senators.svg" alt="Ejemplo de voto senadores" />
+    <mat-card-content>
+      <h3>Senadores</h3>
+      <p>Marca el simbolo del partido y, si corresponde, agrega voto preferencial del mismo partido.</p>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined" class="example-card">
+    <img src="assets/guide/ballot-box.svg" alt="Deposito de voto" />
+    <mat-card-content>
+      <h3>Deposita tu voto</h3>
+      <p>Dobla la cedula y depositala en el anfora. Luego firma el padron.</p>
+    </mat-card-content>
+  </mat-card>
+</section>
+
+<section class="tips">
+  <h2>Evita errores comunes</h2>
+  <div class="tips-grid">
+    <mat-card appearance="outlined">
+      <mat-card-content>
+        <h4>Solo un partido por columna</h4>
+        <p>Si marcas dos partidos en la misma columna, esa columna se anula.</p>
+      </mat-card-content>
+    </mat-card>
+    <mat-card appearance="outlined">
+      <mat-card-content>
+        <h4>Usa aspa (X) o cruz (+)</h4>
+        <p>Otros simbolos no son validos y pueden anular tu voto.</p>
+      </mat-card-content>
+    </mat-card>
+    <mat-card appearance="outlined">
+      <mat-card-content>
+        <h4>No escribas fuera del recuadro</h4>
+        <p>Mantente dentro del recuadro asignado para evitar observaciones.</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</section>

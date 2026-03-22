@@ -1,0 +1,6 @@
+@VotoSeguro.Api_HostAddress = http://localhost:5245
+
+GET {{VotoSeguro.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
