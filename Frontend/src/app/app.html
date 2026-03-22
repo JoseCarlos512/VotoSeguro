@@ -35,11 +35,11 @@
           <div class="stat-grid">
             <div class="stat">
               <span class="stat-label">Candidatos</span>
-              <span class="stat-value">{{ candidates.length }}</span>
+              <span class="stat-value">{{ candidates().length }}</span>
             </div>
             <div class="stat">
               <span class="stat-label">Partidos</span>
-              <span class="stat-value">{{ parties.length }}</span>
+              <span class="stat-value">{{ parties().length }}</span>
             </div>
             <div class="stat">
               <span class="stat-label">Senadores</span>
@@ -60,13 +60,21 @@
         <div class="filter-grid">
           <mat-form-field appearance="fill">
             <mat-label>Buscar candidato o partido</mat-label>
-            <input matInput [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)" placeholder="Ej: Sofia, verde, empleo" />
+            <input
+              matInput
+              [ngModel]="searchTerm()"
+              (ngModelChange)="searchTerm.set($event)"
+              placeholder="Ej: Sofia, verde, empleo"
+            />
             <mat-icon matSuffix>search</mat-icon>
           </mat-form-field>
 
           <mat-form-field appearance="fill">
             <mat-label>Filtrar por partido</mat-label>
-            <mat-select [ngModel]="partyFilter()" (ngModelChange)="partyFilter.set($event)">
+            <mat-select
+              [ngModel]="partyFilter()"
+              (ngModelChange)="partyFilter.set($event)"
+            >
               <mat-option value="">Todos los partidos</mat-option>
               @for (party of partyOptions(); track party.id) {
                 <mat-option [value]="party.id">{{ party.name }}</mat-option>
@@ -76,7 +84,10 @@
 
           <mat-form-field appearance="fill">
             <mat-label>Filtrar por senador</mat-label>
-            <mat-select [ngModel]="senatorFilter()" (ngModelChange)="senatorFilter.set($event)">
+            <mat-select
+              [ngModel]="senatorFilter()"
+              (ngModelChange)="senatorFilter.set($event)"
+            >
               <mat-option value="">Todos los senadores</mat-option>
               @for (senator of senatorOptions(); track senator) {
                 <mat-option [value]="senator">{{ senator }}</mat-option>
@@ -96,40 +107,56 @@
     <div class="candidate-list">
       <h2>Candidatos presidenciales</h2>
       <div class="candidate-grid">
-        @for (candidate of filteredCandidates(); track candidate.id) {
-          <mat-card
-            appearance="outlined"
-            class="candidate-card"
-            [class.selected]="candidate.id === selectedCandidateId()"
-            (click)="selectCandidate(candidate.id)"
-          >
-            <div class="candidate-header">
-              <div
-                class="avatar"
-                [style.background]="partyById(candidate.partyId)?.color"
-              >
-                {{ candidate.initials }}
-              </div>
-              <div>
-                <h3>{{ candidate.name }}</h3>
-                <p>{{ partyById(candidate.partyId)?.name }}</p>
-              </div>
-              <mat-icon class="chevron">chevron_right</mat-icon>
-            </div>
-            <mat-chip-set aria-label="Prioridades">
-              @for (priority of candidate.priorities; track priority) {
-                <mat-chip>{{ priority }}</mat-chip>
-              }
-            </mat-chip-set>
-          </mat-card>
-        }
-        @if (filteredCandidates().length === 0) {
+        @if (loading()) {
           <mat-card class="empty-state" appearance="outlined">
             <mat-card-content>
-              <h3>No se encontraron candidatos</h3>
-              <p>Ajusta tus filtros para ver mas resultados.</p>
+              <h3>Cargando informacion...</h3>
+              <p>Estamos consultando el servicio oficial.</p>
             </mat-card-content>
           </mat-card>
+        } @else if (error()) {
+          <mat-card class="empty-state" appearance="outlined">
+            <mat-card-content>
+              <h3>No se pudo cargar la informacion</h3>
+              <p>{{ error() }}</p>
+            </mat-card-content>
+          </mat-card>
+        } @else {
+          @for (candidate of filteredCandidates(); track candidate.id) {
+            <mat-card
+              appearance="outlined"
+              class="candidate-card"
+              [class.selected]="candidate.id === selectedCandidateId()"
+              (click)="selectCandidate(candidate.id)"
+            >
+              <div class="candidate-header">
+                <div
+                  class="avatar"
+                  [style.background]="partyById(candidate.partyId)?.color"
+                >
+                  {{ candidate.initials }}
+                </div>
+                <div>
+                  <h3>{{ candidate.name }}</h3>
+                  <p>{{ partyById(candidate.partyId)?.name }}</p>
+                </div>
+                <mat-icon class="chevron">chevron_right</mat-icon>
+              </div>
+              <mat-chip-set aria-label="Prioridades">
+                @for (priority of candidate.priorities; track priority) {
+                  <mat-chip>{{ priority }}</mat-chip>
+                }
+              </mat-chip-set>
+            </mat-card>
+          }
+          @if (filteredCandidates().length === 0) {
+            <mat-card class="empty-state" appearance="outlined">
+              <mat-card-content>
+                <h3>No se encontraron candidatos</h3>
+                <p>Ajusta tus filtros para ver mas resultados.</p>
+              </mat-card-content>
+            </mat-card>
+          }
         }
       </div>
     </div>
@@ -181,7 +208,7 @@
               <mat-icon>groups</mat-icon>
               <div>
                 <p class="label">Candidatura vicepresidencial</p>
-                <p class="value">{{ candidate.runningMate }}</p>
+                <p class="value">{{ candidate.runningMate || 'No disponible' }}</p>
               </div>
             </div>
 
@@ -211,7 +238,10 @@
               Estas por registrar tu preferencia por <strong>{{ candidate.name }}</strong> y su partido
               <strong>{{ partyById(candidate.partyId)?.name }}</strong>.
             </p>
-            <mat-checkbox [ngModel]="confirmVote()" (ngModelChange)="confirmVote.set($event)">
+            <mat-checkbox
+              [ngModel]="confirmVote()"
+              (ngModelChange)="confirmVote.set($event)"
+            >
               Confirmo que he revisado la informacion y deseo votar por este candidato.
             </mat-checkbox>
             <div class="vote-actions">
@@ -222,6 +252,13 @@
             </div>
           </mat-card-content>
         </mat-card>
+      } @else {
+        <mat-card class="empty-state" appearance="outlined">
+          <mat-card-content>
+            <h3>Selecciona un candidato</h3>
+            <p>Elige un candidato para ver su informacion detallada.</p>
+          </mat-card-content>
+        </mat-card>
       }
     </div>
   </section>
@@ -229,19 +266,18 @@
   <section class="party-section">
     <h2>Partidos y bancada senatorial</h2>
     <div class="party-grid">
-      @for (party of parties; track party.id) {
+      @for (party of parties(); track party.id) {
         <mat-card appearance="outlined" class="party-card">
           <div class="party-banner" [style.background]="party.color"></div>
           <mat-card-content>
             <h3>{{ party.name }}</h3>
-            <p class="party-ideology">{{ party.ideology }}</p>
-            <p class="party-slogan">{{ party.slogan }}</p>
+            <p class="party-ideology">Candidatos: {{ party.candidateCount }}</p>
+            <p class="party-slogan">Senadores: {{ party.senatorCount }}</p>
             <div class="party-meta">
-              <span>Lider: {{ party.leader }}</span>
-              <span>Fundado en {{ party.founded }}</span>
+              <span>Identificador: {{ party.id }}</span>
             </div>
             <mat-chip-set>
-              @for (candidate of candidates; track candidate.id) {
+              @for (candidate of candidates(); track candidate.id) {
                 @if (candidate.partyId === party.id) {
                   <mat-chip>{{ candidate.name }}</mat-chip>
                 }
@@ -265,4 +301,3 @@
     </div>
   </footer>
 </div>
-

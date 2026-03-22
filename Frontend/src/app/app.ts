@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, signal } from '@angular/core';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -12,16 +13,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-interface Party {
-  id: string;
-  name: string;
-  ideology: string;
-  slogan: string;
-  color: string;
-  leader: string;
-  founded: number;
-}
-
 interface Senator {
   name: string;
   region: string;
@@ -33,13 +24,23 @@ interface Candidate {
   id: string;
   name: string;
   partyId: string;
+  partyName: string;
   runningFor: string;
   bio: string;
   priorities: string[];
   experience: string[];
   runningMate: string;
   senators: Senator[];
+  vicepresidentes: Senator[];
   initials: string;
+}
+
+interface Party {
+  id: string;
+  name: string;
+  color: string;
+  candidateCount: number;
+  senatorCount: number;
 }
 
 @Component({
@@ -47,6 +48,7 @@ interface Candidate {
   imports: [
     CommonModule,
     FormsModule,
+    HttpClientModule,
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
@@ -61,159 +63,50 @@ interface Candidate {
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
+export class App implements OnInit {
+  private readonly apiUrl = 'http://localhost:5245/api/jne/candidatos';
+
   protected readonly electionYear = 2026;
-
-  protected readonly parties: Party[] = [
-    {
-      id: 'renova',
-      name: 'Renovacion Ciudadana',
-      ideology: 'Centro reformista',
-      slogan: 'Gestion que se siente en cada barrio.',
-      color: '#007C9D',
-      leader: 'Valeria Sosa',
-      founded: 2008,
-    },
-    {
-      id: 'verde',
-      name: 'Pacto Verde Nacional',
-      ideology: 'Progresista y ambiental',
-      slogan: 'Crecimiento limpio, futuro seguro.',
-      color: '#2F855A',
-      leader: 'Tomas Echevarria',
-      founded: 2012,
-    },
-    {
-      id: 'alianza',
-      name: 'Alianza por el Trabajo',
-      ideology: 'Socialdemocrata',
-      slogan: 'Trabajo digno, desarrollo real.',
-      color: '#C05621',
-      leader: 'Marcela Quiroz',
-      founded: 1995,
-    },
-    {
-      id: 'futuro',
-      name: 'Futuro y Libertad',
-      ideology: 'Liberal moderno',
-      slogan: 'Innovacion con libertad y reglas claras.',
-      color: '#6B46C1',
-      leader: 'Diego Montalvo',
-      founded: 2016,
-    },
-  ];
-
-  protected readonly candidates: Candidate[] = [
-    {
-      id: 'cand-1',
-      name: 'Sofia Carrasco',
-      partyId: 'renova',
-      runningFor: 'Presidencia',
-      bio: 'Ex ministra de desarrollo social, lidera un plan de seguridad barrial y digitalizacion de servicios publicos.',
-      priorities: ['Seguridad ciudadana', 'Gobierno digital', 'Obras locales'],
-      experience: ['Ex Ministra de Desarrollo Social', 'Alcaldesa de Santa Lucia', 'Directora de ONG Vecinal'],
-      runningMate: 'Andres Huaman',
-      senators: [
-        {
-          name: 'Lucia Paredes',
-          region: 'Costa Norte',
-          focus: ['Seguridad comunitaria', 'Prevencion juvenil'],
-          term: '2018-2026',
-        },
-        {
-          name: 'Martin Ibarra',
-          region: 'Centro',
-          focus: ['Modernizacion del Estado', 'Transparencia'],
-          term: '2020-2026',
-        },
-      ],
-      initials: 'SC',
-    },
-    {
-      id: 'cand-2',
-      name: 'Gabriel Rojas',
-      partyId: 'verde',
-      runningFor: 'Presidencia',
-      bio: 'Economista ambiental, impulsa una transicion energetica justa con empleo verde para las regiones.',
-      priorities: ['Transicion energetica', 'Empleo verde', 'Agua segura'],
-      experience: ['Director de Fondo Climatico', 'Profesor universitario', 'Consultor en energia limpia'],
-      runningMate: 'Elena Cortes',
-      senators: [
-        {
-          name: 'Paula Rojas',
-          region: 'Selva Alta',
-          focus: ['Proteccion de cuencas', 'Economia forestal'],
-          term: '2019-2026',
-        },
-        {
-          name: 'Hector Salinas',
-          region: 'Altiplano',
-          focus: ['Agricultura sostenible', 'Riego tecnificado'],
-          term: '2022-2026',
-        },
-      ],
-      initials: 'GR',
-    },
-    {
-      id: 'cand-3',
-      name: 'Mariana Ponce',
-      partyId: 'alianza',
-      runningFor: 'Presidencia',
-      bio: 'Abogada laboralista, propone un pacto productivo con formacion tecnica y salud primaria.',
-      priorities: ['Empleo formal', 'Salud primaria', 'Educacion tecnica'],
-      experience: ['Congresista 2 periodos', 'Negociadora de reforma laboral', 'Defensora publica'],
-      runningMate: 'Jorge Lazo',
-      senators: [
-        {
-          name: 'Rocio Zegarra',
-          region: 'Litoral',
-          focus: ['Industria pesquera', 'Formacion dual'],
-          term: '2017-2026',
-        },
-        {
-          name: 'Esteban Quispe',
-          region: 'Sierra Sur',
-          focus: ['Salud comunitaria', 'Infraestructura vial'],
-          term: '2021-2026',
-        },
-      ],
-      initials: 'MP',
-    },
-    {
-      id: 'cand-4',
-      name: 'Ricardo Almeida',
-      partyId: 'futuro',
-      runningFor: 'Presidencia',
-      bio: 'Empresario tecnologico, enfocado en inversion privada, talento digital y regulacion simple.',
-      priorities: ['Inversion productiva', 'Talento digital', 'Reforma regulatoria'],
-      experience: ['CEO de startup regional', 'Presidente de gremio empresarial', 'Mentor de emprendimientos'],
-      runningMate: 'Camila Soto',
-      senators: [
-        {
-          name: 'Carolina Lujan',
-          region: 'Metropolitana',
-          focus: ['Innovacion publica', 'Datos abiertos'],
-          term: '2020-2026',
-        },
-        {
-          name: 'Bruno Medina',
-          region: 'Norte Chico',
-          focus: ['Infraestructura logistica', 'Competitividad'],
-          term: '2018-2026',
-        },
-      ],
-      initials: 'RA',
-    },
-  ];
+  protected readonly candidates = signal<Candidate[]>([]);
+  protected readonly loading = signal(true);
+  protected readonly error = signal<string | null>(null);
 
   protected readonly searchTerm = signal('');
   protected readonly partyFilter = signal('');
   protected readonly senatorFilter = signal('');
-  protected readonly selectedCandidateId = signal(this.candidates[0]?.id ?? '');
+  protected readonly selectedCandidateId = signal('');
   protected readonly confirmVote = signal(false);
 
+  constructor(private readonly http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.loadCandidates();
+  }
+
+  protected readonly parties = computed<Party[]>(() => {
+    const map = new Map<string, Party>();
+
+    this.candidates().forEach((candidate) => {
+      const existing = map.get(candidate.partyId);
+      if (existing) {
+        existing.candidateCount += 1;
+        existing.senatorCount += candidate.senators?.length ?? 0;
+      } else {
+        map.set(candidate.partyId, {
+          id: candidate.partyId,
+          name: candidate.partyName || this.titleFromSlug(candidate.partyId),
+          color: this.colorFromString(candidate.partyId),
+          candidateCount: 1,
+          senatorCount: candidate.senators?.length ?? 0,
+        });
+      }
+    });
+
+    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
+  });
+
   protected readonly partyOptions = computed(() =>
-    this.parties.map((party) => ({
+    this.parties().map((party) => ({
       id: party.id,
       name: party.name,
     }))
@@ -221,8 +114,8 @@ export class App {
 
   protected readonly senatorOptions = computed(() => {
     const names = new Set<string>();
-    this.candidates.forEach((candidate) => {
-      candidate.senators.forEach((senator) => names.add(senator.name));
+    this.candidates().forEach((candidate) => {
+      candidate.senators?.forEach((senator) => names.add(senator.name));
     });
     return Array.from(names).sort();
   });
@@ -232,28 +125,28 @@ export class App {
     const party = this.partyFilter();
     const senator = this.senatorFilter();
 
-    return this.candidates.filter((candidate) => {
-      const partyInfo = this.partyById(candidate.partyId);
+    return this.candidates().filter((candidate) => {
+      const partyName = candidate.partyName || '';
       const matchesTerm =
         !term ||
         candidate.name.toLowerCase().includes(term) ||
-        candidate.bio.toLowerCase().includes(term) ||
-        partyInfo?.name.toLowerCase().includes(term);
+        candidate.bio?.toLowerCase().includes(term) ||
+        partyName.toLowerCase().includes(term);
 
       const matchesParty = !party || candidate.partyId === party;
       const matchesSenator =
-        !senator || candidate.senators.some((member) => member.name === senator);
+        !senator || candidate.senators?.some((member) => member.name === senator);
 
       return matchesTerm && matchesParty && matchesSenator;
     });
   });
 
   protected readonly selectedCandidate = computed(() =>
-    this.candidates.find((candidate) => candidate.id === this.selectedCandidateId())
+    this.candidates().find((candidate) => candidate.id === this.selectedCandidateId())
   );
 
   protected partyById(partyId: string): Party | undefined {
-    return this.parties.find((party) => party.id === partyId);
+    return this.parties().find((party) => party.id === partyId);
   }
 
   protected selectCandidate(candidateId: string): void {
@@ -265,5 +158,51 @@ export class App {
     this.searchTerm.set('');
     this.partyFilter.set('');
     this.senatorFilter.set('');
+  }
+
+  private loadCandidates(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.http
+      .get<Candidate[]>(this.apiUrl, {
+        params: {
+          idProcesoElectoral: '124',
+          strUbiDepartamento: '',
+        },
+      })
+      .subscribe({
+        next: (data) => {
+          const list = Array.isArray(data) ? data : [];
+          this.candidates.set(list);
+          if (list.length > 0 && !this.selectedCandidateId()) {
+            this.selectedCandidateId.set(list[0].id);
+          }
+        },
+        error: () => {
+          this.error.set('No se pudo cargar la informacion desde el backend.');
+          this.candidates.set([]);
+        },
+        complete: () => {
+          this.loading.set(false);
+        },
+      });
+  }
+
+  private colorFromString(value: string): string {
+    let hash = 0;
+    for (let index = 0; index < value.length; index += 1) {
+      hash = value.charCodeAt(index) + ((hash << 5) - hash);
+    }
+
+    const hue = Math.abs(hash) % 360;
+    return `hsl(${hue}, 55%, 45%)`;
+  }
+
+  private titleFromSlug(slug: string): string {
+    return slug
+      .split('-')
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
   }
 }
